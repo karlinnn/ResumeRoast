@@ -1,2 +1,11 @@
 fastapi
-uvicorn
+uvicorn[standard]
+python-multipart
+google-genai
+pymupdf>=1.24.0
+psycopg2-binary
+razorpay
+slowapi
+cachetools
+python-dotenv
+httpx

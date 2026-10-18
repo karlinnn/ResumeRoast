@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResumeRoast – AI Resume Feedback</title>
+  <meta name="description" content="Upload your resume, paste a job description, and get an AI-powered roast score plus actionable improvements. Free instant score, paid deep analysis from ₹30." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+<!-- ━━━━━━━━━━━━━━━━  HEADER  ━━━━━━━━━━━━━━━━ -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <span class="logo-text">ResumeRoast</span>
+    </div>
+    <nav class="header-badge">
+      <span class="badge-pill">Hackathon Beta</span>
+    </nav>
+  </div>
+</header>
+
+<!-- ━━━━━━━━━━━━━━━━  HERO  ━━━━━━━━━━━━━━━━ -->
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-label">AI-Powered Resume Feedback</div>
+    <h1 class="hero-title">Your Resume,<br /><span class="gradient-text">Honestly Scored.</span></h1>
+    <p class="hero-subtitle">Upload your resume + paste a job description. Get a brutally honest AI score, a roast, and—if you want—line-by-line rewrites for only <strong class="price-highlight"><s>₹99</s> ₹30</strong>.</p>
+    <div class="hero-stats">
+      <div class="stat"><span>Free Score</span></div>
+      <div class="stat-sep">·</div>
+      <div class="stat"><span>~15 sec</span></div>
+      <div class="stat-sep">·</div>
+      <div class="stat"><span>₹30 Full Report</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ━━━━━━━━━━━━━━━━  FORM CARD  ━━━━━━━━━━━━━━━━ -->
+<main class="container main-content">
+  <section id="upload-section" class="card upload-card">
+    <h2 class="card-title">Step 1 — Drop Your Resume & JD</h2>
+
+    <form id="roast-form" enctype="multipart/form-data" novalidate>
+      <!-- PDF Upload -->
+      <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload resume PDF">
+        <div class="drop-zone-inner">
+          <span class="drop-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </span>
+          <p class="drop-main">Drag &amp; drop your resume PDF here</p>
+          <p class="drop-sub">or <label for="resume-file" class="file-label">browse files</label></p>
+          <p class="drop-limit">Max 2 MB · PDF only</p>
+        </div>
+        <input type="file" id="resume-file" name="resume" accept=".pdf,application/pdf" class="file-input" required />
+      </div>
+      <div id="file-info" class="file-info hidden"></div>
+
+      <!-- JD Input -->
+      <div class="field">
+        <label for="jd-input" class="field-label">Job Description <span class="required">*</span></label>
+        <textarea
+          id="jd-input"
+          name="jd"
+          class="field-textarea"
+          rows="7"
+          placeholder="Paste the full job description here… (max 4000 characters)"
+          maxlength="4000"
+          required
+        ></textarea>
+        <div class="char-counter"><span id="jd-chars">0</span> / 4000</div>
+      </div>
+
+      <button type="submit" id="submit-btn" class="btn btn-primary btn-full" disabled>
+        Analyse My Resume
+      </button>
+    </form>
+  </section>
+
+  <!-- ━━━━━━━━━━━━━━━━  RESULT CARD  ━━━━━━━━━━━━━━━━ -->
+  <section id="result-section" class="hidden">
+
+    <!-- Score Card -->
+    <div id="score-card" class="card score-card">
+      <div class="score-header">
+        <div class="score-ring-wrap">
+          <svg class="score-ring" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52" />
+            <circle id="ring-progress" class="ring-fg" cx="60" cy="60" r="52" />
+          </svg>
+          <div class="score-label">
+            <span id="score-num" class="score-number">--</span>
+            <span class="score-slash">/100</span>
+          </div>
+        </div>
+        <div class="score-meta">
+          <p id="score-verdict" class="verdict-text">Analyzing…</p>
+          <div class="score-badge-wrap">
+            <span id="score-badge" class="score-badge">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Roast points -->
+      <div class="roast-section">
+        <h3 class="roast-title">Feedback</h3>
+        <ul id="roast-list" class="roast-list"></ul>
+      </div>
+
+      <!-- Share -->
+      <div class="share-row">
+        <button id="share-btn" class="btn btn-secondary" onclick="shareScore()">
+          Share Score
+        </button>
+        <button id="copy-btn" class="btn btn-secondary" onclick="copyLink()">
+          Copy Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Unlock Banner -->
+    <div id="unlock-banner" class="card unlock-card">
+      <div class="unlock-badge">PRO REPORT</div>
+      <h2 class="unlock-title">Want the full analysis?</h2>
+      <p class="unlock-desc">Unlock your full report for <strong class="price-highlight"><s>₹99</s> ₹30</strong> and get:</p>
+      <ul class="unlock-features">
+        <li>Line-by-line bullet rewrites with metrics & impact</li>
+        <li>Missing keywords vs the job description</li>
+        <li>Cold email / LinkedIn DM draft, ready to send</li>
+        <li>Complete improved resume text (copy-paste ready)</li>
+      </ul>
+      <button id="unlock-btn" class="btn btn-cta btn-full" onclick="unlockReport()">
+        <span>Unlock Full Report — ₹30</span>
+      </button>
+      <p class="unlock-note">One-time payment · No subscription · Instant delivery</p>
+    </div>
+
+    <!-- Paid Report (hidden until unlocked) -->
+    <div id="paid-report" class="hidden">
+
+      <div class="card">
+        <h3 class="report-section-title">Bullet Rewrites</h3>
+        <div id="bullet-rewrites"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="report-section-title">Missing Keywords</h3>
+        <div id="missing-keywords"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="report-section-title">Cold Email / LinkedIn DM</h3>
+        <pre id="cold-email" class="code-block"></pre>
+        <button class="btn btn-secondary small" onclick="copyEmail()">Copy Email</button>
+      </div>
+
+      <div class="card">
+        <h3 class="report-section-title">Improved Resume Text</h3>
+        <pre id="improved-resume" class="code-block scrollable"></pre>
+        <button class="btn btn-secondary small" onclick="copyResume()">Copy Resume</button>
+      </div>
+
+    </div>
+
+    <!-- Start Over -->
+    <div class="center-action">
+      <button class="btn btn-ghost" onclick="startOver()">Start Over</button>
+    </div>
+  </section>
+
+  <!-- ━━━━━━━━━━━━━━━━  LOADING OVERLAY  ━━━━━━━━━━━━━━━━ -->
+  <div id="loading-overlay" class="loading-overlay hidden">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <p id="loading-msg" class="loading-msg">Reading your resume…</p>
+      <p class="loading-sub">This usually takes 10–20 seconds</p>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━━━  TOAST  ━━━━━━━━━━━━━━━━ -->
+  <div id="toast" class="toast hidden" role="alert" aria-live="assertive"></div>
+
+</main>
+
+<!-- ━━━━━━━━━━━━━━━━  FOOTER  ━━━━━━━━━━━━━━━━ -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>ResumeRoast &mdash; AI resume feedback</p>
+    <nav class="footer-links">
+      <a href="/terms">Terms</a>
+      <span class="footer-sep">·</span>
+      <a href="/privacy">Privacy</a>
+      <span class="footer-sep">·</span>
+      <a href="/refund">Refunds</a>
+      <span class="footer-sep">·</span>
+      <a href="/contact">Contact</a>
+    </nav>
+    <p class="footer-legal">We don't store your resume or JD on our servers. They are processed by an AI provider to create your results.</p>
+  </div>
+</footer>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>
